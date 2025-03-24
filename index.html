@@ -71,12 +71,12 @@
             </div>
 
             <div class="is-size-5 publication-authors">
-              <span class="author-block">Keio University<sup>1</sup>, NVIDIA<sup>2</sup></span>
+              <span class="author-block"><sup>1</sup> Keio University, <sup>2</sup> NVIDIA</span>
               <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
             </div>
 
             <div class="is-size-4">
-              <b><span class="author-block">ECCV 2024 Workshops</span></b>
+              <b><span class="author-block">HANDS @ ECCV 2024</span></b>
             </div>
 
             <div class="column has-text-centered">
@@ -187,6 +187,13 @@
     <div class="container is-max-desktop">
       <h2 class="title is-3">Approach</h2>
       <img src="static/images/emag.jpg" alt="MY ALT TEXT" />
+      <div align="left" style="margin-top: 20px;">
+        <figcaption><b>The architecture of the proposed method</b>. Given input egocentric video frames,
+          we pre-process them and obtain multiple modalities, including RGB and optical flow,
+          detected bounding boxes of objects/hands, and homography matrices of adjacent
+          frames. We train a single Transformer encoder and two Transformer decoders with
+          MLP heads for hand and ego-motion prediction.</figcaption>
+      </div>
     </div>
   </section>
   <!-- End image Approach -->
@@ -249,17 +256,19 @@
 
 
   <!-- Paper poster -->
-  <section class="section is-small">
-    <div class="container is-max-desktop">
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
 
-      <h2 class="title">Poster</h2>
+        <h2 class="title">Poster</h2>
 
-      <div style="position: relative; width: 100%; height: calc(100vw * 0.48); max-height: 550px; overflow: hidden;">
-        <iframe src="static/pdfs/emag_poster.pdf"
-          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allowfullscreen>
-        </iframe>
+        <div style="position: relative; width: 100%; height: calc(100vw * 0.48); max-height: 550px; overflow: hidden;">
+          <iframe src="static/pdfs/emag_poster.pdf"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allowfullscreen>
+          </iframe>
+        </div>
+
       </div>
-
     </div>
   </section>
   <!--End paper poster -->
