@@ -1,0 +1,46 @@
+from models.emag import EMAG
+
+
+def get_network(
+    src_in_features_hoi=512,
+    trg_in_features_hoi=2,
+    src_in_features_ego=2,
+    trg_in_features_ego=2,
+    num_patches_hoi=8,
+    num_patches_ego=1,
+    num_patches_global=2,
+    embed_dim_hoi=512,
+    embed_dim_ego=64,
+    num_heads=8,
+    enc_depth=6,
+    dec_depth=4,
+    coord_dim=64,
+    encoder_time_embed_type="sin",
+    decoder_time_embed_type="sin",
+    num_frames_input_hoi=8,
+    num_frames_output_hoi=5,
+    num_frames_input_ego=8,
+    num_frames_output_ego=5,
+):
+    model = EMAG(
+        src_in_features_hoi=src_in_features_hoi,
+        trg_in_features_hoi=trg_in_features_hoi,
+        src_in_features_ego=src_in_features_ego,
+        trg_in_features_ego=trg_in_features_ego,
+        num_patches_hoi=num_patches_hoi,
+        num_patches_ego=num_patches_ego,
+        num_patches_global=num_patches_global,
+        encoder_time_embed_type=encoder_time_embed_type,
+        decoder_time_embed_type=decoder_time_embed_type,
+        num_frames_input_hoi=num_frames_input_hoi,
+        num_frames_output_hoi=num_frames_output_hoi,
+        num_frames_input_ego=num_frames_input_ego,
+        num_frames_output_ego=num_frames_output_ego,
+        embed_dim_hoi=embed_dim_hoi,
+        embed_dim_ego=embed_dim_ego,
+        coord_dim=coord_dim,
+        num_heads=num_heads,
+        enc_depth=enc_depth,
+        dec_depth=dec_depth,
+    )
+    return model

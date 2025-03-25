@@ -1,0 +1,11 @@
+emag
+__pycache__
+output
+.vscode
+*.pth
+log
+*.log
+checkpoints
+pretrain
+*.sh
+*.png

@@ -1,0 +1,166 @@
+hydra:
+  run:
+    dir: ./output/${now:%Y-%m-%d}/${now:%H-%M-%S}/emag_epic
+
+main:
+  monitored_metric: "val_loss"
+  seed: 42
+  train: True
+  test: False
+  accelerator: gpu
+  devices: [0, 1] #[0, 1, 2, 3, 4, 5, 6, 7]
+  strategy: dp
+  ckpt_pth: /home/mahatano/workspace/hoi-fhp/output/important/ours_2_2_epoch=30_each_l2_ego/checkpoints/epoch=03-val_recon_loss=30.1903.ckpt
+  resume_ckpt:
+
+  logger:
+    name: experiment_OCT_ego4d # name of your experiment
+    tags: [] # add tags to organize experiment
+
+model_config:
+  backbone:
+    base: resnet18 # resnet18, resnet34, resnet50, resnet101, resnet152
+    pretrained: True
+
+    # base: i3d_r50 # i3d_r50
+    # pretrained: True
+    # resnet_width_per_group: 64
+    # num_classes: 16
+    # dropout_rate: 0.5
+    # head: 
+
+    #model_depth: 18
+
+  # Model
+  transformer:
+    src_in_features_hoi: 512
+    trg_in_features_hoi: 512
+    src_in_features_ego: 9
+    trg_in_features_ego: 512
+    use_flow: True
+    num_patches_hoi: 4
+    num_patches_ego: 1
+    num_patches_global: 2
+
+    embed_dim_hoi: 512
+    embed_dim_ego: 512
+    num_heads: 8
+    enc_depth: 2
+    dec_depth: 2
+
+    coord_dim: 64
+    hidden_dim: 512
+    latent_dim: 256
+
+    encoder_time_embed_type: sin # sin, param
+    decoder_time_embed_type: sin # sin, param
+
+    num_frames_input_hoi: 8
+    num_frames_output_hoi: 4
+    num_frames_input_ego: 8
+    num_frames_output_ego: 4
+
+  # LOSS
+  loss:
+    lambda_traj: 1.
+    lambda_traj_kl: 1e-1
+    lambda_motion: 1.
+    lambda_motion_kl: 1
+
+  # OPTIMIZER
+  optimizer:
+    optimizer: adamw # adam, rms, sdg, adamw
+    scheduler: cosine # step, multistep, cosine
+    lr: 2e-4
+    weight_decay: 1e-3
+    momentum: 0.9
+    lr_decay_step: 10
+    lr_decay_gamma: 0.5
+    max_epochs: 30
+    warmup_epochs: 5
+    warmup_lr_init: 0
+
+data_module:
+  train_type: train
+  test_type: val
+  num_frames_hoi: 8
+  num_frames_ego: 8
+  num_pred_ego: 4
+
+  # # ego4d
+  # data_dir: /mnt/ssd1/mahatano/ego4d_data/v1
+  # pickle: /mnt/ssd1/mahatano/ego4d_data/v1/hand-objects
+  # interval: 8
+  # interval_ego_input: 8
+  # interval_ego_output: 8
+  # mean_rgb: [0.3325, 0.3664, 0.4069]
+  # std_rgb: [0.2248, 0.2266, 0.2451] 
+  # mean_flow: [-0.0091, 0.4864, 0]
+  # std_flow: [10.8595, 9.1097, 1]
+  # # homography
+  # mean_ego: [1.0002e+00,  4.0572e-03, -9.2904e-01,  
+  #            2.4077e-03,  1.0002e+00, -2.2682e-01, 
+  #            2.2475e-06,  4.3294e-06,  1.0000e+00] 
+  # std_ego: [7.1561e-02, 4.3756e-02, 1.4797e+01, 
+  #            3.3578e-02, 8.3743e-02, 1.1440e+01,
+  #            1.5850e-04, 1.8914e-04, 1]
+
+  # epic
+  data_dir: /mnt/ssd1/mahatano/EPIC-KITCHENS-55
+  pickle: /mnt/ssd1/mahatano/EPIC-KITCHENS-55/hand-objects-0.5
+  interval: 16
+  interval_ego_input: 16
+  interval_ego_output: 16
+  mean_rgb: [0.3025, 0.3258, 0.3849]
+  std_rgb: [0.2385, 0.2388, 0.2423] 
+  mean_flow: [0.0799, 1.2739, 0] 
+  std_flow: [14.5276, 8.4646, 1] 
+  # homography
+  mean_ego: [ 9.9695e-01,  7.4786e-03, -1.1576e+00, 
+              9.0954e-04,  9.9841e-01,  6.2787e-01, 
+             -7.6744e-06, -1.1019e-06,  1.0000e+00]
+  std_ego: [7.6549e-02, 5.3323e-02, 1.8628e+01, 
+            2.6139e-02, 8.4444e-02, 1.0856e+01,
+            1.3653e-04, 2.2441e-04, 1]
+
+  batch_size: 60  # 60
+  num_workers: 9  # 9
+  delete: [
+    "d18ef16d-f803-4387-bb5e-7876f1522a63",
+    "77ed1624-f87b-4196-9a0a-95b7023b18e4",
+    "128f69dd-f61d-494f-84c2-f3a8c937ae8f",
+    "09910d48-41f9-4a84-bb1b-1bc96de62286",
+    "8e914832-2dd1-44fd-81f8-1b7e2ccd2402",
+  ]
+  clean_type: # single_hand or both_hand
+
+visualize_config:
+  vis_number: 0
+  vis_video: [
+    "eb29c029-a704-4ab8-ab94-f49e8721131e",
+    "db5eba61-05b0-4cf5-96ba-979c6f94e267",
+    "9eafa9d7-3825-41d3-a8c9-c00e97699801",
+    "80264f3a-b986-4189-80af-f1dcbaa0fc14",
+    "08a7fe30-3f6c-42f7-8b92-88df11e59175",
+    "08be6d85-af7d-45e7-a2fd-c8d1f26330a1",
+    "8449f1cb-fd8a-458c-aeb9-b34e2cd7a11d",
+    "26bfc767-548a-43de-9631-0598a32411a7",
+    "63b3c6aa-a327-4c86-8e9b-c5f51462dce4",
+    "dc5b3dd7-687c-45ac-9c1d-462d07257e66",
+    "9b705436-d0da-41ea-85cf-35903324ad60",
+    "e2508048-e8d3-4e48-8129-a1b6abebba74"
+  ]
+  vis_frame: [
+    5519,
+    3273,
+    7906,
+    3185,
+    7574,
+    478,
+    1065,
+    6538,
+    3633,
+    6735,
+    8263,
+    2725
+  ]                   
