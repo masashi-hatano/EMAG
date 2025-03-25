@@ -70,8 +70,6 @@ def main(config):
         logging.basicConfig(level=logging.DEBUG)
         model = EMAGTrainer.load_from_checkpoint(
             model_config=model_config,
-            visualize_config=visualize_config,
-            phase=cfg.phase,
             datamodule_config=datamodule_config,
             checkpoint_path=cfg.ckpt_pth,
         )
