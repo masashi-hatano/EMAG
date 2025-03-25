@@ -69,7 +69,7 @@ class Encoder(nn.Module):
     def no_weight_decay(self):
         return {"pos_embed", "time_embed"}
 
-    def forward(self, x, mask=None, ref_pos=None):
+    def forward(self, x, mask=None):
         B, T, N = x.shape[:3]
 
         x = rearrange(x, "b t n m -> (b t) n m", b=B, t=T, n=N)
@@ -83,7 +83,7 @@ class Encoder(nn.Module):
 
         mask = mask.transpose(1, 2)
         for blk in self.encoder_blocks:
-            x = blk(x, B, T, N, mask=mask, ref_pos=ref_pos)
+            x = blk(x, B, T, N, mask=mask)
 
         x = rearrange(x, "b (n t) m -> b t n m", b=B, t=T, n=N)
         x = self.norm(x)
@@ -149,7 +149,7 @@ class CrossAttention(nn.Module):
     def no_weight_decay(self):
         return {"pos_embed", "time_embed"}
 
-    def forward(self, trg, memory, memory_mask=None, trg_mask=None, ref_pos=None):
+    def forward(self, trg, memory, memory_mask=None, trg_mask=None):
         trg = self.trg_embedding(trg)
 
         B, T, N = trg.shape[:3]
@@ -163,7 +163,7 @@ class CrossAttention(nn.Module):
         trg = rearrange(trg, "(b n) t m -> b (n t) m", b=B, t=T)
 
         for blk in self.decoder_blocks:
-            trg = blk(trg, memory, memory_mask=memory_mask, trg_mask=trg_mask, ref_pos=ref_pos)
+            trg = blk(trg, memory, memory_mask=memory_mask, trg_mask=trg_mask)
 
         trg = self.norm(trg)
         return trg
@@ -226,13 +226,13 @@ class Decoder(nn.Module):
     def no_weight_decay(self):
         return {"pos_embed", "time_embed"}
 
-    def forward(self, trg, memory, memory_mask=None, trg_mask=None, ref_pos=None):
+    def forward(self, trg, memory, memory_mask=None, trg_mask=None):
         trg = self.trg_embedding(trg)
         trg = self.time_embed(trg)
         trg = self.time_drop(trg)
 
         for blk in self.decoder_blocks:
-            trg = blk(trg, memory, memory_mask=memory_mask, trg_mask=trg_mask, ref_pos=ref_pos)
+            trg = blk(trg, memory, memory_mask=memory_mask, trg_mask=trg_mask)
 
         trg = self.norm(trg)
         return trg
@@ -528,8 +528,7 @@ class EMAG(nn.Module):
         # futuer_egos: (B, Tp_ego, 9) T=5
         # hands_mask: (B, 2, Tp), left & right traj valid
         # egos_mask: (B, Tp_ego)
-        # ref_pos: (B), the index of reference frame for relativization
-        # return: pred_hands, pred_egos, traj_loss, traj_kl_loss, motion_loss, motion_kl_loss
+        # return: pred_hands, pred_egos
 
         self.B = bbox_feat.shape[0]
         # if necessary, add global_mask (all one tensor) to the valid_mask: [B, T, 4] -> [B, T, 10]

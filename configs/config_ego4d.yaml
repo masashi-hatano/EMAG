@@ -10,26 +10,13 @@ main:
   accelerator: gpu
   devices: [0, 1] #[0, 1, 2, 3, 4, 5, 6, 7]
   strategy: dp
-  ckpt_pth: /home/mahatano/workspace/hoi-fhp/output/important/ours_2_2_epoch=30_each_l2_ego/checkpoints/epoch=03-val_recon_loss=30.1903.ckpt
+  ckpt_pth: 
   resume_ckpt:
-
-  logger:
-    name: experiment_OCT_ego4d # name of your experiment
-    tags: [] # add tags to organize experiment
 
 model_config:
   backbone:
     base: resnet18 # resnet18, resnet34, resnet50, resnet101, resnet152
     pretrained: True
-
-    # base: i3d_r50 # i3d_r50
-    # pretrained: True
-    # resnet_width_per_group: 64
-    # num_classes: 16
-    # dropout_rate: 0.5
-    # head: 
-
-    #model_depth: 18
 
   # Model
   transformer:
@@ -60,13 +47,6 @@ model_config:
     num_frames_input_ego: 8
     num_frames_output_ego: 4
 
-  # LOSS
-  loss:
-    lambda_traj: 1.
-    lambda_traj_kl: 1e-1
-    lambda_motion: 1.
-    lambda_motion_kl: 1
-
   # OPTIMIZER
   optimizer:
     optimizer: adamw # adam, rms, sdg, adamw
@@ -88,8 +68,8 @@ data_module:
   num_pred_ego: 4
 
   # ego4d
-  data_dir: /mnt/ssd1/mahatano/ego4d_data/v1
-  pickle: /mnt/ssd1/mahatano/ego4d_data/v1/hand-objects
+  data_dir: /data/ego4d_data/v1
+  pickle: /data/ego4d_data/v1/hand-objects
   interval: 8
   interval_ego_input: 8
   interval_ego_output: 8
@@ -113,35 +93,4 @@ data_module:
     "128f69dd-f61d-494f-84c2-f3a8c937ae8f",
     "09910d48-41f9-4a84-bb1b-1bc96de62286",
     "8e914832-2dd1-44fd-81f8-1b7e2ccd2402",
-  ]
-
-visualize_config:
-  vis_number: 0
-  vis_video: [
-    "eb29c029-a704-4ab8-ab94-f49e8721131e",
-    "db5eba61-05b0-4cf5-96ba-979c6f94e267",
-    "9eafa9d7-3825-41d3-a8c9-c00e97699801",
-    "80264f3a-b986-4189-80af-f1dcbaa0fc14",
-    "08a7fe30-3f6c-42f7-8b92-88df11e59175",
-    "08be6d85-af7d-45e7-a2fd-c8d1f26330a1",
-    "8449f1cb-fd8a-458c-aeb9-b34e2cd7a11d",
-    "26bfc767-548a-43de-9631-0598a32411a7",
-    "63b3c6aa-a327-4c86-8e9b-c5f51462dce4",
-    "dc5b3dd7-687c-45ac-9c1d-462d07257e66",
-    "9b705436-d0da-41ea-85cf-35903324ad60",
-    "e2508048-e8d3-4e48-8129-a1b6abebba74"
-  ]
-  vis_frame: [
-    5519,
-    3273,
-    7906,
-    3185,
-    7574,
-    478,
-    1065,
-    6538,
-    3633,
-    6735,
-    8263,
-    2725
-  ]                   
+  ]              

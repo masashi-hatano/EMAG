@@ -315,43 +315,6 @@ class EMAGTrainer(pl.LightningModule):
         self.log("left hand contact disp error", lcontact_disp, on_step=False)
         self.log("right hand contact disp error", rcontact_disp, on_step=False)
 
-    def train_total_loss(self, traj_loss, traj_kl_loss, motion_loss, motion_kl_loss):
-        losses = {}
-        total_loss = 0
-        lambda_traj = self.loss_cfg["lambda_traj"]
-        lambda_traj_kl = self.loss_cfg["lambda_traj_kl"]
-        lambda_motion = self.loss_cfg["lambda_motion"]
-        lambda_motion_kl = self.loss_cfg["lambda_motion_kl"]
-        if lambda_traj is not None and traj_loss is not None:
-            total_loss += lambda_traj * traj_loss.sum()
-            losses["traj_loss"] = traj_loss.detach()
-        else:
-            losses["traj_loss"] = 0.0
-
-        if lambda_traj_kl is not None and traj_kl_loss is not None:
-            total_loss += lambda_traj_kl * traj_kl_loss.sum()
-            losses["traj_kl_loss"] = traj_kl_loss.detach()
-        else:
-            losses["traj_kl_loss"] = 0.0
-
-        if lambda_motion is not None and motion_loss is not None:
-            total_loss += lambda_motion * motion_loss.sum()
-            losses["motion_loss"] = motion_loss.detach()
-        else:
-            losses["motion_loss"] = 0.0
-
-        if lambda_motion_kl is not None and motion_kl_loss is not None:
-            total_loss += lambda_motion_kl * motion_kl_loss.sum()
-            losses["motion_kl_loss"] = motion_kl_loss.detach()
-        else:
-            losses["motion_kl_loss"] = 0.0
-
-        if total_loss is not None:
-            losses["loss"] = total_loss
-        else:
-            losses["loss"] = 0.0
-        return losses
-
     def train_recon_loss(self, preds, targets):
         b, n, t, m = preds.shape
         preds = rearrange(preds, "b n t m -> (b n t) m", b=b, n=n, t=t, m=m)
